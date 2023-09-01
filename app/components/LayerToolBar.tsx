@@ -34,12 +34,25 @@ const LayerToolBar: React.FC<LayerToolBarProps> = ({
         console.log({text, textColor, bgColor} + "from layertoolbar")
     }, [text, textColor, bgColor, triggerChange])
 
+    const handleDownload = () => {
+        const a = document.createElement('a');
+        const canvas: any = document.getElementById('canvas');
+        const dataURL = canvas.toDataURL('image/png');
+
+        a.href = dataURL;
+        a.download = 'canvas-image.png'
+        if(confirm('Do you want to download the file?')){
+            a.click();
+        };
+        
+    }
+
     return (
         <div className='min-h-screen bg-neutral-100  border-4 border-gray-100 rounded-lg shadow-xl'>
 
             <div className='flex flex-col gap-3 '>
                 {/* ToolBar Items List */}
-                <Button label="Save Template" />
+                <Button label="Save Template" action={handleDownload} />
                 <ToolbarItem title="Name" 
                 inputs={['Unnamed']} />
 
