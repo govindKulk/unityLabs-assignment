@@ -69,6 +69,8 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
     <div>
       <canvas 
         id="canvas"
+        width={800}
+        height={800}
         ref={canvasRef}
       />
     </div>
