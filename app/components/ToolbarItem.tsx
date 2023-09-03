@@ -56,10 +56,10 @@ const ToolbarItem: React.FC<ToolBarItemProps>= ({
 
 
         {inputs?.map((input, index) => (
-        <div className='relative'>
+        <div  key={index} className='relative'>
             <input 
             
-            key={index}
+           
             className = " max-w-full outline-none hover:outline-none " type={inputType || "text"} 
             
             value={inputValue}
