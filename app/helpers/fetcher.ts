@@ -1,5 +1,7 @@
 const getResults = async (url: string) => {
-    const result = await fetch(url)
+    const result = await fetch(url,{
+      referrerPolicy: 'unsafe-url'
+    })
     const data = await result.json();
     return data;
   }
