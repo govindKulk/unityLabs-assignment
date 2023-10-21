@@ -1,38 +1,80 @@
 'use client'
 
-import {useState, useCallback} from 'react'
+
 import Image from 'next/image'
-import LayerToolBar from './components/LayerToolBar'
-import CanvasImage from './components/CanvasImage'
-import SettingsToolbar from './components/SettingsToolbar'
+import Search from './components/Search'
+import { useEffect, useState } from 'react'
+import NewsCard from './components/NewsCard';
+import { ClipLoader } from 'react-spinners';
+
+import { getResults, fetcher } from './helpers/fetcher';
+import Loading from './components/Loading';
+import Recents from './components/Recents';
 
 export default function Home() {
+  const [allRes, setAllRes] = useState<Record<any, any>[]>([]) 
+  const [newsData, setNewsData] = useState<Record<any, any>[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [imageUrl, setImageUrl] = useState<string>()
-  const [textData, setTextData] = useState<Record<string,string>>({text: "",textColor: "black", bgColor: "white"})
-
-  const handleImageUpload = (e: any) => {
-    const file = e.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    console.log(imageUrl)
-    setImageUrl(imageUrl);
+  
+  const onSubmit = async (query: string) => {
+    
+    setIsLoading(true)
+    setTimeout(async () => {
+       const res = await getResults(`http://hn.algolia.com/api/v1/search?query=${query}`);
+    setNewsData(res.hits)
+    setIsLoading(false)
+    
+  }, 2000)
   }
 
-  const handleTextChange = (changedData: Record<string, string>) => {
-    setTextData(changedData)
-    console.log(textData)
+  useEffect(  () =>  {
+    setIsLoading(true)
+    fetcher('http://hn.algolia.com/api/v1/search').then((res) => {
+      setIsLoading(false);
+      setNewsData(res.hits)
+      setAllRes(res.hits)
+    })
+    
+
+  }, [])
+
+  const handleSearch = (value: string) => {
+   
+    
+    const filteredNewstData = newsData.filter((news) => news.title?.toLowerCase().includes(value.toLowerCase()) | news.author?.toLowerCase().includes(value.toLowerCase()))
+ 
+    if(filteredNewstData.length === 0){
+      setNewsData(allRes)
+      return
+    }
+    setNewsData(filteredNewstData);
+
   }
+
+
+  
+
   return (
-    <div className='grid grid-cols-5 max-w-screen-2xl mx-auto'>
-     <LayerToolBar triggerChange={handleTextChange}/>
+    <div className='bg-black/50'>
+          <div className=' mx-auto max-w-screen-lg px-4 py-4  min-h-screen'>
+      
 
+      <Loading isLoading={isLoading} />
+      <Search disabled={isLoading} onChange={handleSearch} handleOnSubmit={onSubmit}/>
 
-      <div className='col-span-3 
-      border-2 '>
-      <CanvasImage imgUrl={imageUrl || ''} textData={textData}/>
-
+      <Recents/>
+      <div className='grid  grid-cols-1 sm:grid-cols-2 gap-4 py-8 '>
+        {
+          newsData.map((news, index) => {
+            return <div key={index} className=' '>
+              <NewsCard title={news.title } url={news.url} createdAt={news.created_at} tags={news._tags} author={news.author} objectId={news.objectID}/> 
+            </div>
+          })
+        }
       </div>
-      <SettingsToolbar handleFileUpload={handleImageUpload}/>
     </div>
+    </div>
+  
   )
 }

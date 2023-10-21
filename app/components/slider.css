@@ -1,0 +1,39 @@
+.slick-track {
+   
+    display: flex !important;
+    gap: 1rem;
+    height: 250px !important;
+    justify-content: start;
+
+
+}
+
+.slick-slide, .slick-active, .slick-current, .slick-slide > * {
+    height: 100% !important;
+    overflow: hidden;
+}
+
+li.slick-active {
+    top: 10px !important;
+}
+
+.slick-next::before, .slick-prev::before{
+    content: unset !important;
+}
+
+.slick-prev {
+    display: none;
+}
+
+.slick-slide {
+    
+}
+
+.slick-dots li button::before  {
+    color: white !important; 
+    opacity: 0.6 !important;
+}
+
+li.slick-active button::before {
+    opacity: 1 !important;
+}
